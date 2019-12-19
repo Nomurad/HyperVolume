@@ -171,10 +171,19 @@ def data_save(pareto, vol, ref_point, fname, ext="txt"):
         pareto_arr.append(indiv.obj)
     pareto_arr = np.array(pareto_arr)
 
-    np.savetxt(fname+"_pareto."+ext, pareto_arr)
+    delimiter = " "
+    if ext == "csv":
+        delimiter = ","
+
+    np.savetxt(fname+"_pareto."+ext, pareto_arr, delimiter=delimiter)
     with open(fname+"_HV."+ext, "w") as f:
-        f.write("#HyperVolume,\t#ref_point\n")
-        f.write(f"{vol}, {ref_point}")
+        f.write("#HyperVolume\n")
+        f.write(f"{vol}\n")
+
+        f.write("#ref_point\n")
+        for p in ref_point:
+            f.write(f"{p}, ")
+        f.write("\n")
 
 
 if __name__ == "__main__":
