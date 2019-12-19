@@ -186,7 +186,7 @@ def data_save(pareto, vol, ref_point, fname, ext="txt"):
         f.write("\n")
 
 
-if __name__ == "__main__":
+def main():
     input_fname = "tablex.txt"      #input file name
     output_fname = "result_data"    #result file name
     ext = "txt"     #outputファイルの拡張子
@@ -230,3 +230,5 @@ if __name__ == "__main__":
     indiv_plot(pareto, color="Red")
     plt.show()
     
+if __name__ == "__main__":
+    main()
