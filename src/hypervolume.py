@@ -40,7 +40,6 @@ def indiv_sort(population, key=-1):
     center = [pivot]
     return left+center+right
 
-        
 class NonDominatedSort(object):
 
     def __init__(self):
@@ -156,8 +155,6 @@ class HyperVolume(object):
         
         return res_arr, res_arr[:,dim]
 
-
-
 def indiv_plot(population:list, color=None):
     evals = []
     for indiv in (population):
@@ -181,19 +178,22 @@ def data_save(pareto, vol, ref_point, fname):
 
 
 if __name__ == "__main__":
-    front = np.array([[11,4,4],
-                      [9,2,5],
-                      [5,6,7],
-                      [3,3,10]])
+    input_fname = "tabelx.txt"      #input file name
+    output_fname = "result_data"    #result file name
+
+    # front = np.array([[11,4,4],
+    #                   [9,2,5],
+    #                   [5,6,7],
+    #                   [3,3,10]])
 
 
-    front = np.array([[11,4],
-                      [9,2],
-                      [5,6],
-                      [3,3]])
+    # front = np.array([[11,4],
+    #                   [9,2],
+    #                   [5,6],
+    #                   [3,3]])
 
-
-    dat = np.loadtxt("tablex.txt", skiprows=1)
+    #データの取得 & non-dominated-sort
+    dat = np.loadtxt(input_fname, skiprows=1)
     sortfunc = NonDominatedSort()
     population = []
     for s in dat:
@@ -202,20 +202,18 @@ if __name__ == "__main__":
 
     front = sortfunc.sort(population)
 
-    # front_sort = hypervol.obj_dim_sort(front)
-
-    pareto = front[0]
+    pareto = front[0]   #パレート解のリスト
     print("Number of pareto solutions: ", len(pareto))
     
-    hypervol = HyperVolume(pareto)
     
     #calculate HV
+    hypervol = HyperVolume(pareto)
     vol = hypervol.calc_2d()
     print("ref_point: ",hypervol.ref_point)
     print("HV: ", vol)
 
     #HVなどの出力
-    data_save(pareto, vol, hypervol.ref_point, "result_data")
+    data_save(pareto, vol, hypervol.ref_point, output_fname)
 
     #plot all indiv(blue) and pareto indiv(red)
     indiv_plot(population)
