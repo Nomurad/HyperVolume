@@ -139,7 +139,7 @@ class HyperVolume(object):
             y = (self.ref_point[1] - b_indiv.obj[1])
             vol += x*y
             b_indiv = indiv
-            print(f"vol:{vol:.10f}  x:{x:.5f}  y:{y:.5f}")
+            # print(f"vol:{vol:.10f}  x:{x:.5f}  y:{y:.5f}")
         
         self.volume = vol
         return vol
@@ -167,7 +167,18 @@ def indiv_plot(population:list, color=None):
     evals = np.array(evals)
 
     plt.scatter(evals[:,0], evals[:,1], c=color)
-    
+
+def data_save(pareto, vol, ref_point, fname):
+    pareto_arr = []
+    for indiv in pareto:
+        pareto_arr.append(indiv.obj)
+    pareto_arr = np.array(pareto_arr)
+
+    np.savetxt(fname+"_pareto.txt", pareto_arr)
+    with open(fname+"_HV.txt", "w") as f:
+        f.write("#HyperVolume,\t#ref_point\n")
+        f.write(f"{vol}, {ref_point}")
+
 
 if __name__ == "__main__":
     front = np.array([[11,4,4],
@@ -194,29 +205,20 @@ if __name__ == "__main__":
     # front_sort = hypervol.obj_dim_sort(front)
 
     pareto = front[0]
-    print(len(pareto))
-    print("front::", pareto)
+    print("Number of pareto solutions: ", len(pareto))
     
     hypervol = HyperVolume(pareto)
-
-    print("not sorted")
-    for indiv in pareto:
-        print(indiv.obj)
     
-    print("sorting")
-    pareto = indiv_sort(pareto, key=0)
-    
-    print("sorted")
-    for indiv in pareto:
-        print(indiv.obj)
-    
+    #calculate HV
     vol = hypervol.calc_2d()
-    print("refpoint",hypervol.ref_point)
-    print(vol)
+    print("ref_point: ",hypervol.ref_point)
+    print("HV: ", vol)
 
+    #HVなどの出力
+    data_save(pareto, vol, hypervol.ref_point, "result_data")
+
+    #plot all indiv(blue) and pareto indiv(red)
     indiv_plot(population)
     indiv_plot(pareto, color="Red")
     plt.show()
-    # print()
-    # print(front_sort)
-
+    
