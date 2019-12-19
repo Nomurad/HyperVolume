@@ -165,21 +165,22 @@ def indiv_plot(population:list, color=None):
 
     plt.scatter(evals[:,0], evals[:,1], c=color)
 
-def data_save(pareto, vol, ref_point, fname):
+def data_save(pareto, vol, ref_point, fname, ext="txt"):
     pareto_arr = []
     for indiv in pareto:
         pareto_arr.append(indiv.obj)
     pareto_arr = np.array(pareto_arr)
 
-    np.savetxt(fname+"_pareto.txt", pareto_arr)
-    with open(fname+"_HV.txt", "w") as f:
+    np.savetxt(fname+"_pareto."+ext, pareto_arr)
+    with open(fname+"_HV."+ext, "w") as f:
         f.write("#HyperVolume,\t#ref_point\n")
         f.write(f"{vol}, {ref_point}")
 
 
 if __name__ == "__main__":
-    input_fname = "tabelx.txt"      #input file name
+    input_fname = "tablex.txt"      #input file name
     output_fname = "result_data"    #result file name
+    ext = "txt"     #outputファイルの拡張子
 
     # front = np.array([[11,4,4],
     #                   [9,2,5],
@@ -213,7 +214,7 @@ if __name__ == "__main__":
     print("HV: ", vol)
 
     #HVなどの出力
-    data_save(pareto, vol, hypervol.ref_point, output_fname)
+    data_save(pareto, vol, hypervol.ref_point, output_fname, ext=ext)
 
     #plot all indiv(blue) and pareto indiv(red)
     indiv_plot(population)
