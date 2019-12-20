@@ -92,11 +92,15 @@ class NonDominatedSort(object):
         raise Exception("Error: reached the end of function")
 
 class HyperVolume(object):
-    def __init__(self, pareto):
+    def __init__(self, pareto, ref_points:list=None):
         self.pareto = pareto
         self.pareto_sorted = indiv_sort(self.pareto)
         self.ref_point = np.ones(pareto[0].n_obj)
-        self.set_refpoint()
+        if ref_points != None:
+            self.ref_point = np.array(ref_points)
+        else:
+            self.set_refpoint()
+
         self.obj_dim = pareto[0].n_obj
         self.volume = 0
 
@@ -190,6 +194,7 @@ def main():
     input_fname = "tablex.txt"      #input file name
     output_fname = "result_data"    #result file name
     ext = "txt"     #outputファイルの拡張子
+    ref_points = [1.0, 1.0]
 
     # front = np.array([[11,4,4],
     #                   [9,2,5],
@@ -217,7 +222,7 @@ def main():
     
     
     #calculate HV
-    hypervol = HyperVolume(pareto)
+    hypervol = HyperVolume(pareto, [1.0, 1.0])
     vol = hypervol.calc_2d()
     print("ref_point: ",hypervol.ref_point)
     print("HV: ", vol)
