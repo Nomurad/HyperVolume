@@ -92,17 +92,16 @@ class NonDominatedSort(object):
         raise Exception("Error: reached the end of function")
 
 class HyperVolume(object):
-    def __init__(self, pareto, ref_points:list=None):
+    def __init__(self, pareto, ref_points:list):
         self.pareto = pareto
         self.pareto_sorted = indiv_sort(self.pareto)
         self.ref_point = np.ones(pareto[0].n_obj)
-        if ref_points != None:
-            self.ref_point = np.array(ref_points)
-        else:
-            self.set_refpoint()
+        self.ref_point = np.array(ref_points)
 
         self.obj_dim = pareto[0].n_obj
         self.volume = 0
+
+        self.calcpoints = []
 
     def set_refpoint(self, opt="minimize"):
         pareto_arr = []
@@ -133,18 +132,22 @@ class HyperVolume(object):
         
         vol = 0
         b_indiv = None
-        for i, indiv in enumerate(self.pareto_sorted):
-            if i == 0 or i == len(self.pareto_sorted):
-                b_indiv = indiv
-                continue
 
-            x = (b_indiv.obj[0] - indiv.obj[0])
-            y = (self.ref_point[1] - b_indiv.obj[1])
+        for i, indiv in enumerate(self.pareto_sorted):
+            if i == 0:
+                x = (self.ref_point[0] - indiv.obj[0])
+                y = (self.ref_point[1] - indiv.obj[1])
+            else:
+                x = (b_indiv.obj[0] - indiv.obj[0])
+                y = (self.ref_point[1] - indiv.obj[1])
+
+            self.calcpoints.append([x,y])
             vol += x*y
             b_indiv = indiv
             # print(f"vol:{vol:.10f}  x:{x:.5f}  y:{y:.5f}")
         
         self.volume = vol
+        self.calcpoints = np.array(self.calcpoints)
         return vol
         
 
@@ -228,11 +231,13 @@ def main():
     print("HV: ", vol)
 
     #HVなどの出力
-    data_save(pareto, vol, hypervol.ref_point, output_fname, ext=ext)
+    data_save(hypervol.pareto_sorted, vol, hypervol.ref_point, output_fname, ext=ext)
 
     #plot all indiv(blue) and pareto indiv(red)
     indiv_plot(population)
     indiv_plot(pareto, color="Red")
+    # plt.scatter(hypervol.calcpoints[:,0], hypervol.calcpoints[:,1], "*")
+    print(hypervol.calcpoints)
     plt.show()
     
 if __name__ == "__main__":
